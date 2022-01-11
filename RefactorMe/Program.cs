@@ -8,6 +8,7 @@ namespace RefactorMe
 {
   class Program
   {
+    // Only for debugging purposes.
     static async Task Main(string[] args)
     {
       var gen = new ExternalIdService(null);
@@ -22,9 +23,8 @@ namespace RefactorMe
       var entity2 = new Dictionary<string, object> { { "id", 2 } };
 
       await gen.GenerateAsync(
-         new List<Dictionary<string, object>> { entity1, entity2
-    },
-         new TypeMetadata { Name = "Site" });
+        new List<Dictionary<string, object>> { entity1, entity2 },
+        new TypeMetadata { Name = "Site" });
 
       Console.WriteLine(entity1["externalId"]);
       Console.WriteLine(entity2["externalId"]);
