@@ -5,6 +5,7 @@ using Opsi.Architecture;
 using Opsi.Cloud.Core.Interface;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Opsi.Cloud.Core.Model;
@@ -39,11 +40,20 @@ namespace Opsi.Cloud.Core
 
             try
             {
+                var errorList = DoChecks(entities, typeMetadata).ToList();
+                
+                if (errorList.Count > 0)
+                {
+                    result.AddErrors(errorList);
+                    
+                    return result;
+                }
+                
                 var namingPattern = GetNamingPattern(typeMetadata.Name);
 
                 if (namingPattern == string.Empty)
                 {
-                    //should maybe set result to be Failed before returning?
+                    result.AddError("No Naming Pattern found for the type name provided");
                     return result;
                 }
 
@@ -113,6 +123,35 @@ namespace Opsi.Cloud.Core
             return  Regex.Split(section, RegExConstants.SectionRegexMatch)
                 .Where(s => s != string.Empty)
                 .ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <param name="typeMetadata"></param>
+        /// <returns></returns>
+        private static IEnumerable<string> DoChecks(List<Dictionary<string, object>> entities,
+            TypeMetadata typeMetadata)
+        {
+            var errors = new List<string>();
+            
+            if (typeMetadata == null)
+            {
+                errors.Add("TypeMetaData parameter cannot be null");
+            }
+                
+            if (typeMetadata != null && string.IsNullOrWhiteSpace(typeMetadata.Name))
+            {
+                errors.Add("No TypeMetaData Name provided");
+            }
+
+            if (entities == null)
+            {
+                errors.Add("Entities parameter cannot be null");
+            }
+
+            return errors;
         }
     }
 }
