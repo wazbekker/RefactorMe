@@ -43,6 +43,7 @@ namespace Opsi.Cloud.Core
 
                 if (namingPattern == string.Empty)
                 {
+                    //should maybe set result to be Failed before returning?
                     return result;
                 }
 
